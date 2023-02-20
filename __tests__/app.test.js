@@ -24,4 +24,13 @@ describe("GET /api/topics", () => {
         });
       });
   });
+
+  test("404: should return not found when passed with string not valid", () => {
+    return request(app)
+      .get("/api/topti")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid-path");
+      });
+  });
 });
