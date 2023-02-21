@@ -15,7 +15,11 @@ exports.getArticles = (request, response, next) => {
   fetchArticles(article_id)
     .then((articles) => {
       if (articles.length < 1) return Promise.reject("not-found");
-      response.status(200).send({ articles });
+      if (articles.length === 1) {
+        response.status(200).send({ article: articles });
+      } else {
+        response.status(200).send({ articles: articles });
+      }
     })
     .catch((error) => {
       next(error);
