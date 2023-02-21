@@ -11,3 +11,9 @@ exports.customError = (error, request, response, next) => {
   }
   next(error);
 };
+
+exports.handleError404 = (error, request, response, next) => {
+  if (error.code === "23503") {
+    response.status(404).send({ msg: "article not found" });
+  }
+};

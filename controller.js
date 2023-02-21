@@ -1,8 +1,8 @@
-const { resource } = require("./app");
 const {
   fetchTopics,
   fetchArticles,
   fetchArticleByIdComment,
+  insertCommentById,
 } = require("./model");
 
 exports.getTopics = (request, response, next) => {
@@ -41,6 +41,19 @@ exports.getArticlesIdByComment = (request, response, next) => {
       } else {
         response.status(200).send({ comments: result });
       }
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.postCommentById = (request, response, next) => {
+  const { article_id } = request.params;
+  const objBody = request.body;
+
+  insertCommentById(article_id, objBody)
+    .then((body) => {
+      response.status(201).send({ comment: body });
     })
     .catch((error) => {
       next(error);

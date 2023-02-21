@@ -109,7 +109,7 @@ describe("GET /api/articles/:article_id", () => {
 describe("GET  /api/articles/:article_id/comments", () => {
   test("200: should return array of object comments", () => {
     return request(app)
-      .get("/api/articles/1/comments")
+      .get("/api/articles/1/comment")
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).toHaveLength(11);
@@ -126,7 +126,7 @@ describe("GET  /api/articles/:article_id/comments", () => {
 
   test("404: should return not found when not valid number passed", () => {
     return request(app)
-      .get("/api/articles/13/comments")
+      .get("/api/articles/13/comment")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("not found");
@@ -134,7 +134,52 @@ describe("GET  /api/articles/:article_id/comments", () => {
   });
   test("400: should return bad request when not non number passed", () => {
     return request(app)
-      .get("/api/articles/nonsense/comments")
+      .get("/api/articles/nonsense/comment")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: should return array of object inserted", () => {
+    return request(app)
+      .post("/api/articles/1/comment")
+      .send({
+        username: "butter_bridge",
+        body: "Just posting new comment",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toHaveLength(1);
+        expect(body.comment[0].body).toBe("Just posting new comment");
+        expect(body.comment[0].article_id).toBe(1);
+        expect(body.comment[0].author).toBe("butter_bridge");
+      });
+  });
+  test("400:when incorrect username passed it should return bad-request", () => {
+    return request(app)
+      .post("/api/articles/2/comment")
+      .send({ username: 45, body: "incomplete comment" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("404 if no article found with requested id", () => {
+    return request(app)
+      .post("/api/articles/100000/comment")
+      .send({ username: "butter_bridge", body: "Just posting new comment" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
+  test("status 400 for invalid non numeric id", () => {
+    return request(app)
+      .post("/api/articles/banana/comment")
+      .send({ username: "butter_bridge", body: "THIS IS A NEW COMMENT" })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
