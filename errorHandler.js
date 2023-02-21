@@ -6,8 +6,8 @@ exports.customError = (error, request, response, next) => {
     response.status(404).send({ msg: "not found" });
   } else if (error === "bad-request") {
     response.status(400).send({ msg: "Bad Request" });
-  } else if (error === "exist not found") {
-    response.status(404).send({ comment: [] });
+  } else if (error === "not valid") {
+    response.status(400).send({ msg: "Not Valid Id" });
   }
   next(error);
 };
