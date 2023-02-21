@@ -1,4 +1,9 @@
-const { fetchTopics, fetchArticles } = require("./model");
+const { resource } = require("./app");
+const {
+  fetchTopics,
+  fetchArticles,
+  fetchArticleByIdComment,
+} = require("./model");
 
 exports.getTopics = (request, response, next) => {
   fetchTopics()
@@ -19,6 +24,22 @@ exports.getArticles = (request, response, next) => {
         response.status(200).send({ article: articles });
       } else {
         response.status(200).send({ articles: articles });
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.getArticlesIdByComment = (request, response, next) => {
+  const { article_id } = request.params;
+  fetchArticleByIdComment(article_id)
+    .then((result) => {
+      if (result.length < 1) return Promise.reject("not-found");
+      if (result.length === 1) {
+        response.status(200).send({ comment: result });
+      } else {
+        response.status(200).send({ comments: result });
       }
     })
     .catch((error) => {

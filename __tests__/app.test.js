@@ -73,7 +73,6 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body.article).toHaveLength(1);
         expect(body.article[0].article_id).toBe(1);
         expect(body.article[0].title).toBe(
@@ -100,6 +99,42 @@ describe("GET /api/articles/:article_id", () => {
   test("400: should return bad request when not non number passed", () => {
     return request(app)
       .get("/api/articles/talk")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET  /api/articles/:article_id/comments", () => {
+  test("200: should return array of object comments", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(11);
+        body.comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty("votes", expect.any(Number));
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+          expect(comment).toHaveProperty("author", expect.any(String));
+          expect(comment).toHaveProperty("body", expect.any(String));
+          expect(comment).toHaveProperty("article_id", expect.any(Number));
+        });
+      });
+  });
+
+  test("404: should return not found when not valid number passed", () => {
+    return request(app)
+      .get("/api/articles/13/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("400: should return bad request when not non number passed", () => {
+    return request(app)
+      .get("/api/articles/nonsense/comments")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
