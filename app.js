@@ -1,11 +1,20 @@
 const express = require("express");
 const { getTopics, getArticles } = require("./controller");
-const { handleError404 } = require("./errorHandler");
+const {
+  handlePathError,
+  handleError404,
+  handleError400,
+} = require("./errorHandler");
 const app = express();
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 
-app.get("/api/*", handleError404);
+app.get("/api/articles/:article_id", getArticles);
+
+app.get("/api/*", handlePathError);
+
+app.use(handleError404);
+app.use(handleError400);
 
 module.exports = app;
