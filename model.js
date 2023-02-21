@@ -1,5 +1,4 @@
 const db = require("./db/connection");
-
 exports.fetchTopics = () => {
   return db.query(`SELECT * FROM topics;`).then((result) => {
     return result.rows;
@@ -28,4 +27,24 @@ exports.fetchArticleByIdComment = (article_id) => {
   return db.query(queryStr, [article_id]).then((result) => {
     return result.rows;
   });
+};
+
+exports.insertCommentById = (article_id, objBody) => {
+  const { username, body } = objBody;
+  if (
+    !username ||
+    typeof username !== "string" ||
+    !+article_id ||
+    !body ||
+    body === ""
+  )
+    return Promise.reject("bad-request");
+  return db
+    .query(
+      `INSERT INTO comments (body, author, article_id) VALUES ($1, $2, $3) RETURNING *;`,
+      [body, username, article_id]
+    )
+    .then((result) => {
+      return result.rows;
+    });
 };
