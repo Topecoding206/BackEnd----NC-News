@@ -176,10 +176,37 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("article not found");
       });
   });
-  test("status 400 for invalid non numeric id", () => {
+  test("400 for invalid non numeric id", () => {
     return request(app)
       .post("/api/articles/banana/comment")
       .send({ username: "butter_bridge", body: "THIS IS A NEW COMMENT" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400 when body is empty", () => {
+    return request(app)
+      .post("/api/articles/1/comment")
+      .send({ username: "butter_bridge", body: "" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400 when body is not assigned", () => {
+    return request(app)
+      .post("/api/articles/1/comment")
+      .send({ username: "butter_bridge" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400 when body is not assigned", () => {
+    return request(app)
+      .post("/api/articles/1/comment")
+      .send({ body: "THIS IS A NEW COMMENT" })
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");

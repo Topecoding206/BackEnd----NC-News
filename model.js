@@ -31,7 +31,13 @@ exports.fetchArticleByIdComment = (article_id) => {
 
 exports.insertCommentById = (article_id, objBody) => {
   const { username, body } = objBody;
-  if (typeof username !== "string" || !+article_id)
+  if (
+    !username ||
+    typeof username !== "string" ||
+    !+article_id ||
+    !body ||
+    body === ""
+  )
     return Promise.reject("bad-request");
   return db
     .query(
