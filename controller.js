@@ -10,8 +10,14 @@ exports.getTopics = (request, response, next) => {
     });
 };
 
-exports.getArticles = (request, response) => {
-  fetchArticles().then((articles) => {
-    response.status(200).send({ articles });
-  });
+exports.getArticles = (request, response, next) => {
+  const { article_id } = request.params;
+  fetchArticles(article_id)
+    .then((articles) => {
+      if (articles.length < 1) return Promise.reject("not-found");
+      response.status(200).send({ articles });
+    })
+    .catch((error) => {
+      next(error);
+    });
 };
