@@ -291,3 +291,27 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  test("200: should return an array of user object", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toHaveLength(4);
+        body.users.forEach((user) => {
+          expect(user).toHaveProperty("username", expect.any(String));
+          expect(user).toHaveProperty("name", expect.any(String));
+          expect(user).toHaveProperty("avatar_url", expect.any(String));
+        });
+      });
+  });
+  test("404: should return invalid when pass with not valid name", () => {
+    return request(app)
+      .get("/api/user")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid-path");
+      });
+  });
+});

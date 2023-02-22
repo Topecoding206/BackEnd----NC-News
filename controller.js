@@ -4,6 +4,7 @@ const {
   fetchArticleByIdComment,
   insertCommentById,
   updateArticleById,
+  fetchUser,
 } = require("./model");
 
 exports.getTopics = (request, response, next) => {
@@ -72,4 +73,10 @@ exports.patchArticleById = (request, response, next) => {
     .catch((error) => {
       next(error);
     });
+};
+
+exports.getUser = (request, response, next) => {
+  fetchUser().then((users) => {
+    response.status(200).send({ users: users });
+  });
 };
