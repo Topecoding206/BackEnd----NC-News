@@ -19,7 +19,10 @@ exports.getTopics = (request, response, next) => {
 
 exports.getArticles = (request, response, next) => {
   const { article_id } = request.params;
-  fetchArticles(article_id)
+  const { topic, sort_by, order } = request.query;
+  const queriesBody = request.query;
+
+  fetchArticles(article_id, topic, sort_by, order, queriesBody)
     .then((articles) => {
       if (articles.length < 1) return Promise.reject("not-found");
       if (articles.length === 1) {
