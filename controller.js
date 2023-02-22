@@ -3,6 +3,7 @@ const {
   fetchArticles,
   fetchArticleByIdComment,
   insertCommentById,
+  updateArticleById,
 } = require("./model");
 
 exports.getTopics = (request, response, next) => {
@@ -54,6 +55,19 @@ exports.postCommentById = (request, response, next) => {
   insertCommentById(article_id, objBody)
     .then((body) => {
       response.status(201).send({ comment: body });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.patchArticleById = (request, response, next) => {
+  const { article_id } = request.params;
+  const body = request.body;
+  updateArticleById(body, article_id)
+    .then((result) => {
+      if (result.length < 1) return Promise.reject("not-found");
+      response.status(200).send({ article: result });
     })
     .catch((error) => {
       next(error);
