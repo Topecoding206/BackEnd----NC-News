@@ -251,7 +251,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .send({ inc_votes: -50 })
       .expect(200)
       .then(({ body }) => {
-        expect(body.article[0].votes).toEqual(50);
+        expect(body.article[0].votes).toBe(50);
       });
   });
   test("400: should return bad request when non inc_votes passed", () => {
