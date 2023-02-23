@@ -120,3 +120,15 @@ exports.fetchUser = () => {
     return result.rows;
   });
 };
+
+exports.removeCommentById = (comment_id) => {
+  if (!+comment_id && comment_id !== undefined)
+    return Promise.reject("bad-request");
+  return db
+    .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [
+      comment_id,
+    ])
+    .then((result) => {
+      return result.rows;
+    });
+};
