@@ -40,7 +40,7 @@ exports.getArticles = (request, response, next) => {
       if (articles.length > 0) {
         articles[0]["comment_count"] = +comment[0].count;
       }
-      if (articles.length < 1) {
+      if (articles.length < 2) {
         response.status(200).send({ article: articles });
       } else {
         response.status(200).send({ articles: articles });
