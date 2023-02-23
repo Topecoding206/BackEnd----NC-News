@@ -57,6 +57,14 @@ exports.fetchArticles = (
   });
 };
 
+exports.checkTopic = (topic) => {
+  return db
+    .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
+    .then((result) => {
+      return result.rows;
+    });
+};
+
 exports.fetchArticleByIdComment = (article_id) => {
   if (!+article_id && article_id !== undefined)
     return Promise.reject("bad-request");
