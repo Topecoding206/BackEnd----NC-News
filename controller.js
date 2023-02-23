@@ -7,6 +7,7 @@ const {
   fetchUser,
   checkTopic,
   removeCommentById,
+  addComments,
 } = require("./model");
 
 exports.getTopics = (request, response, next) => {
@@ -31,10 +32,14 @@ exports.getArticles = (request, response, next) => {
     queriesBody
   );
   const topicsPromise = checkTopic(topic);
-  Promise.all([articlesPromise, topicsPromise])
-    .then(([articles, topics]) => {
+  const commentPromise = addComments(article_id);
+  Promise.all([articlesPromise, topicsPromise, commentPromise])
+    .then(([articles, topics, comment]) => {
       if (articles.length < 1 && topics.length < 1)
         return Promise.reject("not-found");
+      if (articles.length > 0) {
+        articles[0]["comment_count"] = +comment[0].count;
+      }
       if (articles.length < 1) {
         response.status(200).send({ article: articles });
       } else {

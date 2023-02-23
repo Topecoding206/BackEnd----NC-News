@@ -41,7 +41,7 @@ exports.fetchArticles = (
     queryStr += `ORDER BY created_at ${orderCapitalLetter}`;
   }
   if (article_id) {
-    queryStr += `WHERE article_id = $1 ORDER BY created_at ${orderCapitalLetter}`;
+    queryStr += `WHERE article_id = $1 ORDER BY created_at ${orderCapitalLetter} `;
     paraArray.push(article_id);
   }
 
@@ -60,6 +60,17 @@ exports.fetchArticles = (
 exports.checkTopic = (topic) => {
   return db
     .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
+    .then((result) => {
+      return result.rows;
+    });
+};
+exports.addComments = (article_id) => {
+  return db
+    .query(
+      `SELECT COUNT(c.comment_id) FROM articles AS a 
+      LEFT JOIN comments AS c ON a.article_id = c.article_id WHERE a.article_id = $1 ;`,
+      [article_id]
+    )
     .then((result) => {
       return result.rows;
     });

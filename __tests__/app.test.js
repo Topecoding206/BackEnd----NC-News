@@ -79,6 +79,7 @@ describe("GET /api/articles/:article_id", () => {
           expect(article.title).toBe("Living in the shadow of a great man");
           expect(article.topic).toBe("mitch");
           expect(article.author).toBe("butter_bridge");
+          expect(article.comment_count).toBe(11);
           expect(article.body).toBe("I find this existence challenging");
           expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
           expect(article.votes).toBe(100);
