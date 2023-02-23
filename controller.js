@@ -5,6 +5,7 @@ const {
   insertCommentById,
   updateArticleById,
   fetchUser,
+  checkTopic,
 } = require("./model");
 
 exports.getTopics = (request, response, next) => {
@@ -19,10 +20,21 @@ exports.getTopics = (request, response, next) => {
 
 exports.getArticles = (request, response, next) => {
   const { article_id } = request.params;
-  fetchArticles(article_id)
-    .then((articles) => {
-      if (articles.length < 1) return Promise.reject("not-found");
-      if (articles.length === 1) {
+  const { topic, sort_by, order } = request.query;
+  const queriesBody = request.query;
+  const articlesPromise = fetchArticles(
+    article_id,
+    topic,
+    sort_by,
+    order,
+    queriesBody
+  );
+  const topicsPromise = checkTopic(topic);
+  Promise.all([articlesPromise, topicsPromise])
+    .then(([articles, topics]) => {
+      if (articles.length < 1 && topics.length < 1)
+        return Promise.reject("not-found");
+      if (articles.length < 1) {
         response.status(200).send({ article: articles });
       } else {
         response.status(200).send({ articles: articles });
@@ -76,7 +88,11 @@ exports.patchArticleById = (request, response, next) => {
 };
 
 exports.getUser = (request, response, next) => {
-  fetchUser().then((users) => {
-    response.status(200).send({ users: users });
-  });
+  fetchUser()
+    .then((users) => {
+      response.status(200).send({ users: users });
+    })
+    .catch((error) => {
+      next(error);
+    });
 };

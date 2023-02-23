@@ -5,18 +5,64 @@ exports.fetchTopics = () => {
   });
 };
 
-exports.fetchArticles = (article_id) => {
-  if (!+article_id && article_id !== undefined)
-    return Promise.reject("bad-request");
+exports.fetchArticles = (
+  article_id,
+  topic,
+  sort_by,
+  order = "DESC",
+  queriesBody
+) => {
+  const orderCapitalLetter = order.toUpperCase();
+  const validateSortBy = [
+    "article_id",
+    "topic",
+    "author",
+    "title",
+    "created_at",
+    "votes",
+  ];
+
+  const validateOrder = ["ASC", "DESC"];
   let queryStr = `SELECT * FROM articles `;
   const paraArray = [];
+  const checkPropertyKey = Object.keys(queriesBody);
+  if (
+    (!+article_id && article_id !== undefined) ||
+    (!validateSortBy.includes(sort_by) && sort_by) ||
+    !validateOrder.includes(orderCapitalLetter) ||
+    (!article_id &&
+      !topic &&
+      !sort_by &&
+      order === "DESC" &&
+      checkPropertyKey.length > 0)
+  )
+    return Promise.reject("bad-request");
+  if (!article_id && !topic && !sort_by) {
+    queryStr += `ORDER BY created_at ${orderCapitalLetter}`;
+  }
   if (article_id) {
-    queryStr += `WHERE article_id = $1`;
+    queryStr += `WHERE article_id = $1 ORDER BY created_at ${orderCapitalLetter}`;
     paraArray.push(article_id);
+  }
+
+  if (topic && order) {
+    queryStr += `WHERE topic = $1 ORDER BY created_at ${orderCapitalLetter}`;
+    paraArray.push(topic);
+  }
+  if (sort_by && order) {
+    queryStr += ` ORDER BY ${sort_by} ${orderCapitalLetter}`;
   }
   return db.query(queryStr, paraArray).then((result) => {
     return result.rows;
   });
+};
+
+exports.checkTopic = (topic) => {
+  return db
+    .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
+    .then((result) => {
+      return result.rows;
+    });
 };
 
 exports.fetchArticleByIdComment = (article_id) => {
