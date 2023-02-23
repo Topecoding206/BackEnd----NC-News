@@ -6,6 +6,7 @@ const {
   updateArticleById,
   fetchUser,
   checkTopic,
+  removeCommentById,
 } = require("./model");
 
 exports.getTopics = (request, response, next) => {
@@ -91,6 +92,18 @@ exports.getUser = (request, response, next) => {
   fetchUser()
     .then((users) => {
       response.status(200).send({ users: users });
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.deleteComment = (request, response, next) => {
+  const { comment_id } = request.params;
+  removeCommentById(comment_id)
+    .then((comment) => {
+      if (comment.length < 1) return Promise.reject("not-found");
+      response.status(204).send();
     })
     .catch((error) => {
       next(error);

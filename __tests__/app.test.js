@@ -442,3 +442,26 @@ describe("GET /api/articles sort by queries", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: should respond with status 204, no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+
+  test("404: should return not found for valid but non existent id", () => {
+    return request(app)
+      .delete("/api/comments/200000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("400: for invalid non numeric id", () => {
+    return request(app)
+      .delete("/api/comments/fgfd")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
