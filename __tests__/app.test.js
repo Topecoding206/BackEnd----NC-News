@@ -73,19 +73,17 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles).toHaveLength(1);
-        body.articles.forEach((article) => {
-          expect(article.article_id).toBe(1);
-          expect(article.title).toBe("Living in the shadow of a great man");
-          expect(article.topic).toBe("mitch");
-          expect(article.author).toBe("butter_bridge");
-          expect(article.body).toBe("I find this existence challenging");
-          expect(article.created_at).toBe("2020-07-09T20:11:00.000Z");
-          expect(article.votes).toBe(100);
-          expect(article.article_img_url).toBe(
-            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-          );
-        });
+        const arrayObject = {
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          votes: 100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        };
+        expect(body.article).toHaveLength(1);
+        expect(body.article[0]).toMatchObject(arrayObject);
       });
   });
   test("404: should return not found when not valid number passed", () => {
@@ -462,6 +460,33 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe(" GET /api/articles/:article_id (comment count)", () => {
+  test("200: the article response should now include comment count property", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article[0]).toHaveProperty("comment_count");
+      });
+  });
+  test("200: the comment_count respond 11 when the article_id is 1", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article[0].comment_count).toEqual(11);
+      });
+  });
+  test("200: the comment_count respond with 0 when the article_id is 2", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article[0].comment_count).toEqual(0);
       });
   });
 });
