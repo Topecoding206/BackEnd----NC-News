@@ -1,14 +1,6 @@
 const express = require("express");
-const {
-  getTopics,
-  getArticles,
-  getArticlesIdByComment,
-  postCommentById,
-  patchArticleById,
-  getUser,
-  deleteComment,
-  getEndpoints,
-} = require("./controller");
+const apiRouters = require("./routers/apiRouter");
+
 const {
   handlePathError,
   customError,
@@ -16,17 +8,8 @@ const {
 } = require("./errorHandler");
 const app = express();
 app.use(express.json());
-app.get("/api/topics", getTopics);
-app.get("/api/articles", getArticles);
-
-app.get("/api/articles/:article_id", getArticles);
-app.get("/api/articles/:article_id/comment", getArticlesIdByComment);
-app.patch("/api/articles/:article_id", patchArticleById);
-app.post("/api/articles/:article_id/comment", postCommentById);
-app.get("/api/users", getUser);
-app.delete("/api/comments/:comment_id", deleteComment);
-app.get("/api", getEndpoints);
-app.get("/*", handlePathError);
+app.use("/api", apiRouters);
+app.all("/*", handlePathError);
 app.use(customError);
 app.use(handleError404);
 
