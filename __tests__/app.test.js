@@ -465,3 +465,48 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("GET /api", () => {
+  test("200: should respond with all endpoints available", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const { availableEndpoints } = body;
+        const expected = [
+          "GET /api",
+          "GET /api/topics",
+          "GET /api/articles",
+          "GET /api/articles/:ariticle_id",
+          "GET /api/articles/:article_id/comment",
+          "PATCH /api/articles/:article_id",
+          "POST /api/articles/:article_id/comment",
+          "GET /api/users",
+          "DELETE /api/articles/comments/:comment_id",
+        ];
+
+        expect(Object.keys(availableEndpoints)).toEqual(
+          expect.arrayContaining(expected)
+        );
+      });
+  });
+  test("200:should respond with key of endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const { availableEndpoints } = body;
+        for (endpoint in availableEndpoints) {
+          expect(availableEndpoints[endpoint]).toHaveProperty("description");
+        }
+      });
+  });
+  test("404: should return not found when passed with incorrect path", () => {
+    return request(app)
+      .get("/apz")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("invalid-path");
+      });
+  });
+});

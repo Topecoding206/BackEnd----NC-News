@@ -7,6 +7,7 @@ const {
   patchArticleById,
   getUser,
   deleteComment,
+  getEndpoints,
 } = require("./controller");
 const {
   handlePathError,
@@ -24,6 +25,7 @@ app.patch("/api/articles/:article_id", patchArticleById);
 app.post("/api/articles/:article_id/comment", postCommentById);
 app.get("/api/users", getUser);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api", getEndpoints);
 app.get("/*", handlePathError);
 app.use(customError);
 app.use(handleError404);
