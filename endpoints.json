@@ -23,5 +23,83 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:ariticle_id": {
+    "description": "serves an array of single object by id",
+    "exampleResponse": {
+      "article": [
+        {
+          "article_id": 1,
+          "title": "Running a Node App",
+          "topic": "coding",
+          "author": "jessjelly",
+          "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+          "created_at": "2020-11-07T06:03:00.000Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700"
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comment": {
+    "description": "serves an array of all the comments",
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 31,
+          "votes": 11,
+          "created_at": "2020-09-26T17:16:00.000Z",
+          "author": "weegembump",
+          "body": "Sit sequi odio suscipit. Iure quisquam qui alias distinctio eos officia enim aut sit. Corrupti ut praesentium ut iste earum itaque qui. Dolores in ab rerum consequuntur. Id ab aliquid autem dolore.",
+          "article_id": 1
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "serves an array of all the comments",
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 31,
+          "votes": 11,
+          "created_at": "2020-09-26T17:16:00.000Z",
+          "author": "weegembump",
+          "body": "Sit sequi odio suscipit. Iure quisquam qui alias distinctio eos officia enim aut sit. Corrupti ut praesentium ut iste earum itaque qui. Dolores in ab rerum consequuntur. Id ab aliquid autem dolore.",
+          "article_id": 1
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comment": {
+    "description": "this allow users to add comment to the articles",
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 31,
+          "votes": 11,
+          "created_at": "2020-09-26T17:16:00.000Z",
+          "author": "weegembump",
+          "body": "Sit sequi odio suscipit. Iure quisquam qui alias distinctio eos officia enim aut sit. Corrupti ut praesentium ut iste earum itaque qui. Dolores in ab rerum consequuntur. Id ab aliquid autem dolore.",
+          "article_id": 1
+        }
+      ]
+    }
+  },
+
+  "GET /api/users": {
+    "description": "this serves an array of all the users",
+    "exampleResponse": {
+      "user": [
+        {
+          "username": "tickle122",
+          "name": "Tom Tickle",
+          "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+        }
+      ]
+    }
+  },
+  "DELETE /api/articles/comments/:comment_id": {
+    "description": "this allow users to delete a comment"
   }
 }

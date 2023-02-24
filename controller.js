@@ -9,7 +9,7 @@ const {
   removeCommentById,
   addComments,
 } = require("./model");
-
+const availableEndpoints = require("./endpoints.json");
 exports.getTopics = (request, response, next) => {
   fetchTopics()
     .then((topics) => {
@@ -113,4 +113,8 @@ exports.deleteComment = (request, response, next) => {
     .catch((error) => {
       next(error);
     });
+};
+
+exports.getEndpoints = (request, response, next) => {
+  response.status(200).send({ availableEndpoints });
 };
