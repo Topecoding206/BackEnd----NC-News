@@ -8,6 +8,7 @@ const {
   checkTopic,
   removeCommentById,
   addComments,
+  fetchUserById,
 } = require("./model");
 const availableEndpoints = require("./endpoints.json");
 exports.getTopics = (request, response, next) => {
@@ -117,4 +118,20 @@ exports.deleteComment = (request, response, next) => {
 
 exports.getEndpoints = (request, response, next) => {
   response.status(200).send({ availableEndpoints });
+};
+
+exports.getUserById = (request, response, next) => {
+  const { username } = request.params;
+  fetchUserById(username)
+    .then((result) => {
+      if (result.length < 1) return Promise.reject("not-found");
+      if (result.length < 2) {
+        response.status(200).send({ user: result });
+      } else {
+        response.status(200).send({ users: result });
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
 };

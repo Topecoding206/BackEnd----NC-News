@@ -143,3 +143,12 @@ exports.removeCommentById = (comment_id) => {
       return result.rows;
     });
 };
+
+exports.fetchUserById = (username) => {
+  if (+username) return Promise.reject("bad-request");
+  return db
+    .query(`SELECT * FROM users WHERE username = $1`, [username])
+    .then((result) => {
+      return result.rows;
+    });
+};

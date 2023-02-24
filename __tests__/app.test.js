@@ -43,16 +43,13 @@ describe("GET /api/articles", () => {
       .then(({ body }) => {
         expect(Array.isArray(body.articles)).toBe(true);
         expect(body.articles).toHaveLength(12);
-        body.articles.forEach((articles) => {
-          expect(articles).toHaveProperty("title", expect.any(String));
-          expect(articles).toHaveProperty("author", expect.any(String));
-          expect(articles).toHaveProperty("body", expect.any(String));
-          expect(articles).toHaveProperty("created_at", expect.any(String));
-          expect(articles).toHaveProperty("votes", expect.any(Number));
-          expect(articles).toHaveProperty(
-            "article_img_url",
-            expect.any(String)
-          );
+        body.articles.forEach((article) => {
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("body", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("article_img_url", expect.any(String));
         });
       });
   });
@@ -532,6 +529,40 @@ describe("GET /api", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("invalid-path");
+      });
+  });
+});
+
+describe("GET /api/users/:username", () => {
+  test("200: should return array of object with specific username", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        const arrayObject = {
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        };
+        expect(body.user).toHaveLength(1);
+        expect(body.user[0]).toMatchObject(arrayObject);
+      });
+  });
+  test("404: should return not found when not valid number passed", () => {
+    return request(app)
+      .get("/api/users/nonsense")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("400: should return bad request when not non number passed", () => {
+    return request(app)
+      .get("/api/users/25")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
       });
   });
 });
