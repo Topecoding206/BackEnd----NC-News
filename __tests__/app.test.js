@@ -566,3 +566,76 @@ describe("GET /api/users/:username", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200: should return the comment when zero vote pass", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 0 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toHaveLength(1);
+        expect(body.comment[0].comment_id).toBe(1);
+        expect(body.comment[0].body).toBe(
+          "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!"
+        );
+        expect(body.comment[0].votes).toBe(16);
+        expect(body.comment[0].author).toBe("butter_bridge");
+        expect(body.comment[0].article_id).toBe(9);
+      });
+  });
+  test("200: should return updated comment with vote increase", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send({ inc_votes: 20 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment[0].votes).toBe(34);
+      });
+  });
+  test("200: should return updated comment with vote decrease", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: -10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment[0].votes).toBe(6);
+      });
+  });
+  test("400: should return bad request when non inc_votes passed", () => {
+    return request(app)
+      .patch("/api/comments/2")
+      .send({ inc_votes: "apple" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("404: should return not found for non existent comment", () => {
+    return request(app)
+      .patch("/api/comments/50000")
+      .send({ inc_votes: 20 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("400: should return bad request when body doesnt have inc_votes property", () => {
+    return request(app)
+      .patch("/api/comments/10")
+      .send({ banana: 20 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: should not for invalid non numeric id", () => {
+    return request(app)
+      .patch("/api/comments/banana")
+      .send({ inc_votes: 10 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not Valid Id");
+      });
+  });
+});

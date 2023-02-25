@@ -9,6 +9,7 @@ const {
   removeCommentById,
   addComments,
   fetchUserById,
+  updateComment,
 } = require("./model");
 const availableEndpoints = require("./endpoints.json");
 exports.getTopics = (request, response, next) => {
@@ -130,6 +131,19 @@ exports.getUserById = (request, response, next) => {
       } else {
         response.status(200).send({ users: result });
       }
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+exports.patchComment = (request, response, next) => {
+  const { comment_id } = request.params;
+  const body = request.body;
+  updateComment(comment_id, body)
+    .then((result) => {
+      if (result.length < 1) return Promise.reject("not-found");
+      response.status(200).send({ comment: result });
     })
     .catch((error) => {
       next(error);

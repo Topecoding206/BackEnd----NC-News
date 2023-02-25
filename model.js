@@ -152,3 +152,23 @@ exports.fetchUserById = (username) => {
       return result.rows;
     });
 };
+
+exports.updateComment = (comment_id, body) => {
+  const { inc_votes } = body;
+  if (!+comment_id && comment_id !== undefined)
+    return Promise.reject("not valid");
+  if (
+    (Object.keys(body).length < 1 && !inc_votes) ||
+    !Object.keys(body).includes("inc_votes") ||
+    typeof inc_votes !== "number"
+  )
+    return Promise.reject("bad-request");
+  return db
+    .query(
+      `UPDATE comments SET votes = $2 + votes WHERE comment_id = $1 RETURNING *;`,
+      [comment_id, inc_votes]
+    )
+    .then((result) => {
+      return result.rows;
+    });
+};
