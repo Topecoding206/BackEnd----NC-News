@@ -23,7 +23,8 @@ exports.fetchArticles = (
   ];
 
   const validateOrder = ["ASC", "DESC"];
-  let queryStr = `SELECT * FROM articles `;
+  let queryStr = `SELECT articles.title,articles.article_img_url, articles.topic,articles.body, articles.author, articles.created_at, articles.votes, articles.article_id, COUNT(comments.article_id) AS comment_count 
+  FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id `;
   const paraArray = [];
   const checkPropertyKey = Object.keys(queriesBody);
   if (
@@ -38,19 +39,20 @@ exports.fetchArticles = (
   )
     return Promise.reject("bad-request");
   if (!article_id && !topic && !sort_by) {
-    queryStr += `ORDER BY created_at ${orderCapitalLetter}`;
+    queryStr += `GROUP BY articles.article_id ORDER BY created_at ${orderCapitalLetter}`;
   }
+
   if (article_id) {
-    queryStr += `WHERE article_id = $1 ORDER BY created_at ${orderCapitalLetter} `;
+    queryStr += `WHERE articles.article_id = $1 GROUP BY articles.article_id ORDER BY created_at ${orderCapitalLetter} `;
     paraArray.push(article_id);
   }
 
   if (topic && order) {
-    queryStr += `WHERE topic = $1 ORDER BY created_at ${orderCapitalLetter}`;
+    queryStr += `WHERE articles.topic = $1 GROUP BY articles.article_id ORDER BY created_at ${orderCapitalLetter}`;
     paraArray.push(topic);
   }
   if (sort_by && order) {
-    queryStr += ` ORDER BY ${sort_by} ${orderCapitalLetter}`;
+    queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${orderCapitalLetter}`;
   }
   return db.query(queryStr, paraArray).then((result) => {
     return result.rows;
