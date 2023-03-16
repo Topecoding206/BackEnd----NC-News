@@ -39,9 +39,7 @@ exports.getArticles = (request, response, next) => {
     .then(([articles, topics, comment]) => {
       if (articles.length < 1 && topics.length < 1)
         return Promise.reject("not-found");
-      if (articles.length > 0) {
-        articles[0]["comment_count"] = +comment[0].count;
-      }
+
       if (articles.length < 2) {
         response.status(200).send({ article: articles });
       } else {

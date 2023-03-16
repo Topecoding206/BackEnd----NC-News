@@ -348,6 +348,7 @@ describe("GET /api/articles sort by queries", () => {
         expect(body.articles).toBeSortedBy("votes", { descending: true });
       });
   });
+
   test("200:sort_by = topic", () => {
     return request(app)
       .get("/api/articles?sort_by=topic")
@@ -475,7 +476,7 @@ describe(" GET /api/articles/:article_id (comment count)", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.article[0].comment_count).toEqual(11);
+        expect(body.article[0].comment_count).toEqual("11");
       });
   });
   test("200: the comment_count respond with 0 when the article_id is 2", () => {
@@ -483,7 +484,7 @@ describe(" GET /api/articles/:article_id (comment count)", () => {
       .get("/api/articles/2")
       .expect(200)
       .then(({ body }) => {
-        expect(body.article[0].comment_count).toEqual(0);
+        expect(body.article[0].comment_count).toEqual("0");
       });
   });
 });
